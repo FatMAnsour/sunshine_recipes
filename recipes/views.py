@@ -10,6 +10,9 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from .forms import RecipeForm
 from .models import Recipe, Tag
 
+from rest_framework import generics, filters
+from .serializers import RecipeSerializer
+
 
 class RecipeListView(ListView):
     model = Recipe
@@ -124,3 +127,18 @@ class WeeklyMealPlanPrintView(TemplateView):
 
         ctx["plan"] = plan
         return ctx
+
+
+
+class RecipeListAPI(generics.ListCreateAPIView):
+    queryset = Recipe.objects.prefetch_related("tags").all()
+    serializer_class = RecipeSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["title", "description", "ingredients"]
+    ordering_fields = ["created_at", "prep_minutes", "cook_minutes"]
+    ordering = ["-created_at"]
+
+
+class RecipeDetailAPI(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Recipe.objects.prefetch_related("tags").all()
+    serializer_class = RecipeSerializer
