@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Today’s Pick · Sunshine{% endblock %}
+{% block content %}
+<h1 class="fw-bold mb-3">Today’s Pick ☀️</h1>
+
+<form method="get" class="d-flex gap-2 mb-3">
+  <select class="form-select" name="mood" style="max-width: 260px;">
+    <option value="">Any mood</option>
+    {% for key,label in moods %}
+      <option value="{{ key }}" {% if selected_mood == key %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  <button class="btn btn-primary">Pick one</button>
+</form>
+
+{% if pick %}
+  <div class="card sun-card">
+    <div class="card-body">
+      <h3 class="mb-1"><a class="text-decoration-none" href="{{ pick.get_absolute_url }}">{{ pick.title }}</a></h3>
+      <div class="text-muted">{{ pick.get_mood_display }} · {{ pick.total_minutes }} min</div>
+      <p class="mt-2 mb-0">{{ pick.description|default:"Your next sunny bite awaits!" }}</p>
+    </div>
+  </div>
+{% else %}
+  <div class="alert alert-warning">No recipes found. Add a recipe first 🌼</div>
+{% endif %}
+{% endblock %}

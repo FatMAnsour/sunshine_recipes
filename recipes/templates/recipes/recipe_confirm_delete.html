@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Delete · Sunshine{% endblock %}
+{% block content %}
+<div class="card sun-card">
+  <div class="card-body">
+    <h1 class="fw-bold">Delete recipe?</h1>
+    <p class="text-muted">This will permanently delete <strong>{{ object.title }}</strong>.</p>
+    <form method="post">
+      {% csrf_token %}
+      <button class="btn btn-danger">Yes, delete</button>
+      <a class="btn btn-outline-secondary" href="{{ object.get_absolute_url }}">Cancel</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

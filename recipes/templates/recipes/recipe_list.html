@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Recipes · Sunshine{% endblock %}
+
+{% block content %}
+<div class="row g-3 align-items-end mb-3">
+  <div class="col-12 col-lg-8">
+    <h1 class="fw-bold mb-1">Find a recipe for your mood ✨</h1>
+    <p class="text-muted mb-0">Search, filter by mood, or pick a tag. Keep it cheerful, tasty, and simple.</p>
+  </div>
+</div>
+
+<form method="get" class="card sun-card p-3 mb-4">
+  <div class="row g-2">
+    <div class="col-12 col-md-4">
+      <label class="form-label">Search</label>
+      <input class="form-control" name="q" value="{{ filters.q }}" placeholder="chicken, pasta, soup...">
+    </div>
+    <div class="col-6 col-md-3">
+      <label class="form-label">Mood</label>
+      <select class="form-select" name="mood">
+        <option value="">Any</option>
+        {% for key,label in moods %}
+          <option value="{{ key }}" {% if filters.mood == key %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-6 col-md-3">
+      <label class="form-label">Tag</label>
+      <select class="form-select" name="tag">
+        <option value="">Any</option>
+        {% for t in tags %}
+          <option value="{{ t.name }}" {% if filters.tag == t.name %}selected{% endif %}>{{ t.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-6 col-md-2">
+      <label class="form-label">Favorites</label>
+      <select class="form-select" name="fav">
+        <option value="">All</option>
+        <option value="1" {% if filters.fav == "1" %}selected{% endif %}>Only favorites</option>
+      </select>
+    </div>
+    <div class="col-12 d-flex gap-2 mt-2">
+      <button class="btn btn-primary">Filter</button>
+      <a class="btn btn-outline-secondary" href="{% url 'recipes:list' %}">Reset</a>
+    </div>
+  </div>
+</form>
+
+{% if recipes %}
+  <div class="row g-3">
+    {% for r in recipes %}
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card sun-card h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <h5 class="card-title mb-1">
+                <a class="text-decoration-none" href="{{ r.get_absolute_url }}">{{ r.title }}</a>
+              </h5>
+              {% if r.is_favorite %}<span class="badge badge-soft">★</span>{% endif %}
+            </div>
+            <div class="text-muted small mb-2">{{ r.get_mood_display }} · {{ r.total_minutes }} min</div>
+            <p class="card-text">{{ r.description|default:"A delicious recipe waiting for a sunny day."|truncatechars:120 }}</p>
+            <div class="d-flex flex-wrap gap-1">
+              {% for t in r.tags.all %}
+                <span class="badge text-bg-light border">{{ t.name }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="card-footer bg-white border-0 d-flex gap-2">
+            <a class="btn btn-sm btn-outline-primary" href="{{ r.get_absolute_url }}">View</a>
+            <a class="btn btn-sm btn-outline-secondary" href="{% url 'recipes:update' r.pk %}">Edit</a>
+            <a class="btn btn-sm btn-outline-warning" href="{% url 'recipes:toggle_favorite' r.pk %}">Toggle ★</a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if is_paginated %}
+    <nav class="mt-4">
+      <ul class="pagination">
+        {% if page_obj.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ filters.q }}&mood={{ filters.mood }}&tag={{ filters.tag }}&fav={{ filters.fav }}">Prev</a></li>
+        {% endif %}
+        <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
+        {% if page_obj.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ filters.q }}&mood={{ filters.mood }}&tag={{ filters.tag }}&fav={{ filters.fav }}">Next</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
+{% else %}
+  <div class="alert alert-warning">
+    No recipes yet. Add your first one and bring the sunshine 🌞
+    <a href="{% url 'recipes:create' %}" class="alert-link">Add recipe</a>
+  </div>
+{% endif %}
+{% endblock %}

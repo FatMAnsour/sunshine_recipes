@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}{{ recipe.title }} · Sunshine{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-3">
+  <div>
+    <h1 class="fw-bold mb-1">{{ recipe.title }} {% if recipe.is_favorite %}<span class="text-warning">★</span>{% endif %}</h1>
+    <div class="text-muted">{{ recipe.get_mood_display }} · {{ recipe.total_minutes }} min</div>
+    <div class="mt-2 d-flex flex-wrap gap-1">
+      {% for t in recipe.tags.all %}
+        <span class="badge text-bg-light border">{{ t.name }}</span>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="d-flex gap-2">
+    <a class="btn btn-outline-warning" href="{% url 'recipes:toggle_favorite' recipe.pk %}">Toggle ★</a>
+    <a class="btn btn-outline-secondary" href="{% url 'recipes:update' recipe.pk %}">Edit</a>
+    <a class="btn btn-outline-danger" href="{% url 'recipes:delete' recipe.pk %}">Delete</a>
+  </div>
+</div>
+
+{% if recipe.description %}
+  <p class="lead">{{ recipe.description }}</p>
+{% endif %}
+
+<div class="row g-3">
+  <div class="col-12 col-lg-5">
+    <div class="card sun-card">
+      <div class="card-body">
+        <h5 class="card-title">Ingredients 🥕</h5>
+        <ul class="mb-0">
+          {% for line in recipe.ingredients.splitlines %}
+            {% if line %}<li>{{ line }}</li>{% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-lg-7">
+    <div class="card sun-card">
+      <div class="card-body">
+        <h5 class="card-title">Steps 🍳</h5>
+        <ol class="mb-0">
+          {% for line in recipe.steps.splitlines %}
+            {% if line %}<li class="mb-1">{{ line }}</li>{% endif %}
+          {% endfor %}
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<a class="btn btn-link mt-3" href="{% url 'recipes:list' %}">← Back to list</a>
+{% endblock %}

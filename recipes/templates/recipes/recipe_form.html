@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}{% if form.instance.pk %}Edit{% else %}Add{% endif %} Recipe · Sunshine{% endblock %}
+
+{% block content %}
+<div class="card sun-card">
+  <div class="card-body">
+    <h1 class="fw-bold mb-3">{% if form.instance.pk %}Edit{% else %}Add{% endif %} Recipe 🌻</h1>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <div class="row g-3">
+        <div class="col-12 col-md-8">
+          <label class="form-label">Title</label>
+          {{ form.title }}
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label">Prep (min)</label>
+          {{ form.prep_minutes }}
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label">Cook (min)</label>
+          {{ form.cook_minutes }}
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label class="form-label">Mood</label>
+          {{ form.mood }}
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="form-label">Tags</label>
+          {{ form.tags_text }}
+          <div class="form-text">{{ form.tags_text.help_text }}</div>
+        </div>
+
+        <div class="col-12">
+          <label class="form-label">Description</label>
+          {{ form.description }}
+        </div>
+
+        <div class="col-12 col-lg-6">
+          <label class="form-label">Ingredients</label>
+          {{ form.ingredients }}
+        </div>
+        <div class="col-12 col-lg-6">
+          <label class="form-label">Steps</label>
+          {{ form.steps }}
+        </div>
+
+        <div class="col-12">
+          <div class="form-check">
+            {{ form.is_favorite }}
+            <label class="form-check-label">Mark as favorite</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-3 d-flex gap-2">
+        <button class="btn btn-primary" type="submit">Save</button>
+        <a class="btn btn-outline-secondary" href="{% url 'recipes:list' %}">Cancel</a>
+      </div>
+
+      {% if form.errors %}
+        <div class="alert alert-danger mt-3">
+          Please fix the errors above.
+        </div>
+      {% endif %}
+    </form>
+  </div>
+</div>
+
+<script>
+</script>
+{% endblock %}
